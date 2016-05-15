@@ -1,12 +1,5 @@
 package frogger;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-import frogger.*;
 import java.io.File;
 import java.util.ArrayList;
 import javafx.animation.AnimationTimer;
@@ -52,29 +45,35 @@ import javafx.scene.media.AudioClip;
 import static frogger.GameManager.*;
 import static frogger.Junk.bumpFactor;
 import static java.lang.Math.random;
-import java.net.URL;
 import java.nio.file.Paths;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
-import javafx.animation.PathTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
-import static javafx.application.Application.launch;
-import javafx.event.Event;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.effect.BoxBlur;
-import static javafx.scene.input.DataFormat.URL;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.util.Duration;
 
 /**
+ *Gestionnaire de l'IHM qui permet notamment:
+ *<ul> 
+ *<li>
+ *<li>Son initialisation
+ *<li>La mise en place des zones du terrein de jeu
+ *<li>La création des objets animés
+ *<li>La création des objets graphiques
+ *<li>L'animation des objets
+ * </ul>
+ * <p>
+ * La version est indiquée par une variable %v% reconnu par CVS
+ * 
  * @author jb
+ * @version %v%
  */
 public class GUIManager extends Application {
 
@@ -196,7 +195,7 @@ public class GUIManager extends Application {
     double junkRotateValue=1;
 
     String fontFamily_0 = "Arial";
-    String fontFamily_1 = "Chiller";
+    String fontFamily_1 = "OCR A Extended";
     String fontFamily_2 = "Courier New";
     String fontFamily_3 = "OCR A Extended";
 
@@ -269,6 +268,12 @@ public class GUIManager extends Application {
    //Game runningGame = null;
     GUIMode GMode = GUIMode.MENU;
 
+    /**
+    * Mise en place des boutons play/quit
+    * 
+    * @author jb
+    * @version %v%
+    */
     void setButts() {
 
         playButt = new Button("Play");
@@ -278,8 +283,8 @@ public class GUIManager extends Application {
         //goButt.getStyleClass().add("ipad-dark-grey");
         quitButt.getStyleClass().add("ipad-dark-grey");
 
-        int bw = 100;
-        int bh = 30;
+        int bw = 85;
+        int bh = 33;
         playButt.setPrefSize(bw, bh);
         //goButt.setPrefSize(bw, bh);
         quitButt.setPrefSize(bw, bh);
@@ -321,26 +326,33 @@ public class GUIManager extends Application {
 
     }
 
+    /**
+    * Mise en place des boutons 
+    * des choix de niveau de jeu
+    * 
+    * @author jb
+    * @version %v%
+    */
     void setRadioButts() {
 
         rb1 = new RadioButton("Beginner");
         rb1.setToggleGroup(levelSelector);
         rb1.setUserData(Game.Level.BEGINNER);
         rb1.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 14));
-        rb1.setTextFill(Color.web("#0f0"));
+        rb1.setTextFill(Color.web("#fff"));
         rb1.setSelected(true);
 
         rb2 = new RadioButton("Confirmed");
         rb2.setToggleGroup(levelSelector);
         rb2.setUserData(Game.Level.CONFIRMED);
         rb2.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 14));
-        rb2.setTextFill(Color.web("#0f0"));
+        rb2.setTextFill(Color.web("#fff"));
 
         rb3 = new RadioButton("Expert");
         rb3.setToggleGroup(levelSelector);
         rb3.setUserData(Game.Level.EXPERT);
         rb3.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 14));
-        rb3.setTextFill(Color.web("#0f0"));
+        rb3.setTextFill(Color.web("#fff"));
 
         levelSelector.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -354,6 +366,12 @@ public class GUIManager extends Application {
 
     }
 
+    /**
+    * Mise en place du tableau de bord
+    * 
+    * @author jb
+    * @version %v%
+    */
     void setMenuGrid() {
 
         menuGrid = new GridPane();
@@ -369,8 +387,8 @@ public class GUIManager extends Application {
         setRadioButts();
 
         Label topLabel = new Label("FROGGER 16");
-        topLabel.setFont(Font.font(fontFamily_1, FontWeight.BOLD, 52));
-        topLabel.setTextFill(Color.web("#f00"));
+        topLabel.setFont(Font.font(fontFamily_1, FontWeight.BOLD, 24));
+        topLabel.setTextFill(Color.web("#80ff00"));
         //topLabel.setFont(new Font("Arial", 16));
         topLabel.setPadding(new Insets(10, 10, 10, 10));
         menuGrid.add(topLabel, 0, 0, 2, 1);
@@ -378,13 +396,13 @@ public class GUIManager extends Application {
         //ImageView imageHouse = new ImageView(
         //new Image(LayoutSample.class.getResourceAsStream("graphics/house.png")));
         Label leftLabel = new Label("Highest scores:");
-        leftLabel.setFont(Font.font(fontFamily_1, FontWeight.BOLD, 40));
-        leftLabel.setTextFill(Color.web("#0f0"));
+        leftLabel.setFont(Font.font(fontFamily_1, FontWeight.BOLD, 24));
+        leftLabel.setTextFill(Color.web("#80ff00"));
         leftLabel.setPadding(new Insets(10, 10, 10, 0));
         menuGrid.add(leftLabel, 0, 1);
         Label rightLabel = new Label("Options:");
-        rightLabel.setFont(Font.font(fontFamily_1, FontWeight.BOLD, 40));
-        rightLabel.setTextFill(Color.web("#0f0"));
+        rightLabel.setFont(Font.font(fontFamily_1, FontWeight.BOLD, 24));
+        rightLabel.setTextFill(Color.web("#80ff00"));
         rightLabel.setPadding(new Insets(10, 10, 10, 0));
         menuGrid.add(rightLabel, 1, 1);
 
@@ -440,6 +458,12 @@ public class GUIManager extends Application {
         return (root.getWidth() - 5 * pondWidth) / 10;
     }
 
+    /**
+    * Mise en place des mares
+    * 
+    * @author jb
+    * @version %v%
+    */
     void initPonds() {
 
         pondWidth = pnd_Img.getWidth();
@@ -470,6 +494,13 @@ public class GUIManager extends Application {
 
     }
 
+    /**
+    * Calcul de l'affichage des voies d'eau
+    * en fonction de la largeur d'écran
+    * 
+    * @author jb
+    * @version %v%
+    */
     void setLanesViewports(Scene s) {
 
         tmp = sc.getWidth();
@@ -484,6 +515,8 @@ public class GUIManager extends Application {
         Rectangle2D v7 = new Rectangle2D(0, 0, tmp, 50);
         Rectangle2D v8 = new Rectangle2D(0, 0, tmp, 50);
         Rectangle2D v9 = new Rectangle2D(0, 0, tmp, 50);
+        
+        //Rectangle2D junkBackground = new Rectangle2D(0, 0, tmp, lanesMode*50);
 
         lanes.get(0).setFitWidth(tmp);
         lanes.get(0).setViewport(v0);
@@ -506,7 +539,12 @@ public class GUIManager extends Application {
         lanes.get(9).setFitWidth(tmp);
         lanes.get(9).setViewport(v9);
     }
-
+    /**
+    * Création du tableau des voies
+    * 
+    * @author jb
+    * @version %v%
+    */
     private void initLanesArrays() {
 
         waterLane_1 = new ImageView(wtrLane);
@@ -515,11 +553,11 @@ public class GUIManager extends Application {
         waterLane_4 = new ImageView(wtrLane);
         waterLane_5 = new ImageView(wtrLane);
 
-//        waterLane_1.setOpacity(0);
-//        waterLane_2.setOpacity(0);
-//        waterLane_3.setOpacity(0);
-//        waterLane_4.setOpacity(0);
-//        waterLane_5.setOpacity(0);
+        waterLane_1.setOpacity(0);
+        waterLane_2.setOpacity(0);
+        waterLane_3.setOpacity(0);
+        waterLane_4.setOpacity(0);
+        waterLane_5.setOpacity(0);
                 
         waterLanes.add(waterLane_1);
         waterLanes.add(waterLane_2);
@@ -536,6 +574,12 @@ public class GUIManager extends Application {
 
     }
 
+    /**
+    * Mise en place du tableau de gestion dynamique des voies
+    * pour le redimensionnement
+    * @author jb
+    * @version %v%
+    */
     private void setMainLanesArray() {
 
         initLanesArrays();
@@ -554,6 +598,12 @@ public class GUIManager extends Application {
 
     }
 
+    /**
+    * Mise en place des voies
+    * 
+    * @author jb
+    * @version %v%
+    */
     @SuppressWarnings("empty-statement")
     void initLanes(Scene s) {
 
@@ -577,6 +627,12 @@ public class GUIManager extends Application {
 
     }
 
+    /**
+    * Calcul du nombre de grenouilles disponibles
+    * 
+    * @author jb
+    * @version %v%
+    */
     public static void updateFrogPool() {
 
         frogPool.getChildren().clear();
@@ -589,6 +645,14 @@ public class GUIManager extends Application {
 
     }
 
+     /**
+    * Fonction clé:
+    * Mise en place de la grenouille courante
+    * avec task et déclaration de thread
+    * 
+    * @author jb
+    * @version %v%
+    */
     public static void setRunningFrog(Frog.Status fst) {
         
         arrowKeysEnabled = false;
@@ -614,11 +678,10 @@ public class GUIManager extends Application {
         mainMsg.setFont(Font.font("Arial", FontWeight.BOLD, 60));
         centerDashboard.getChildren().add(mainMsg);
         mainMsg.setText(""+runningFrog.getIndex());
-        //greatbell1_mp.play();
         greatbell1Sound.play();
         
         transitScale(mainMsg, 5,5,1, Duration.millis(500));
-
+        
         Task<Void> goFroggy = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -629,7 +692,6 @@ public class GUIManager extends Application {
                 return null;
             }
         };
-
         goFroggy.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
             
             @Override
@@ -661,23 +723,9 @@ public class GUIManager extends Application {
 
             }
         });
-        
         new Thread(goFroggy).start();
   
     }
-    
-//    static void doPath(){
-//        
-//        Path p = new Path();
-//        p.getElements().add(new MoveTo(50,50));
-//        PathTransition pt = new PathTransition();
-//        pt.setDuration(Duration.millis(2000));
-//        pt.setPath(p);
-//        pt.setNode(runningFrog);
-//        pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-//        pt.play();
-//        
-//    }
 
     static void transitScale(Node n, int inX,int inY,int out, Duration d){
 
@@ -697,6 +745,12 @@ public class GUIManager extends Application {
         }
     }
     
+    /**
+    * Aspect visuel noyade grenouille
+    * 
+    * @author jb
+    * @version %v%
+    */
     void drown(Frog f){
         
         //if (f.getStatus()!=Frog.Status.HOME && f.getStatus()!=Frog.Status.FLOATING){
@@ -716,6 +770,14 @@ public class GUIManager extends Application {
 
     }
 
+    /**
+    * Fonction clé:
+    * Mouvements par flèches clavier
+    * Gestion intersection
+    * 
+    * @author jb
+    * @version %v%
+    */
     private void initFrogs() {
 
         Frog frog1 = new Frog(frog4_Img);
@@ -944,7 +1006,7 @@ public class GUIManager extends Application {
 
         Label topLabel = new Label("3 frogged ponds ! !\nPlease enter your name :");
         topLabel.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 22));
-        topLabel.setTextFill(Color.web("#0f0"));
+        topLabel.setTextFill(Color.web("#80ff00"));
         topLabel.setPadding(new Insets(10, 10, 10, 10));
 
         //ImageView imageHouse = new ImageView(
@@ -960,8 +1022,8 @@ public class GUIManager extends Application {
         
         OKButt = new Button("OK");
         OKButt.getStyleClass().add("ipad-dark-grey");
-        int bw = 100;
-        int bh = 30;
+        int bw = 85;
+        int bh = 33;
         OKButt.setPrefSize(bw, bh);
         OKButt.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -995,7 +1057,7 @@ public class GUIManager extends Application {
         
         
         stp.getChildren().add(menuBackground);
-        stp.getChildren().get(0).setScaleX(.82);
+        stp.getChildren().get(0).setScaleX(.8);
         stp.getChildren().get(0).setScaleY(.8);
         stp.getChildren().get(0).setOpacity(.8);
         stp.getChildren().add(userInputGrid);
@@ -1212,12 +1274,6 @@ public class GUIManager extends Application {
         rootCenter = root.getHeight() / 2;
         rootQuarter = root.getWidth() / 4;
         rootFifth = root.getWidth() / 5;
-        
-        
-//        String image = JavaFXApplication9.class.getResource("/img/dirty.jpg").toExternalForm();
-//        root.setStyle("-fx-background-image: url('" + image + "'); " +
-//           //"-fx-background-position: center center; " +
-//           "-fx-background-repeat: stretch;");
 
         root.setPrefSize(1024, 650);
         sc = new Scene(root);
@@ -1243,7 +1299,7 @@ public class GUIManager extends Application {
     */
     void setStage(Stage s) {
 
-        s.setMinHeight(300);
+        s.setMinHeight(490);
         s.setMinWidth(800);
         s.setScene(sc);
         s.setTitle("F R O G G E R  16");
@@ -1311,6 +1367,8 @@ public class GUIManager extends Application {
         mower_mp = new MediaPlayer(mower_m);
         mower_mp.setCycleCount(1000);
         
+        
+        
         greatbell1Sound = new AudioClip(Paths.get("src/audio/mp3/greatbell1.mp3").toUri().toString());
         yeehawSound = new AudioClip(Paths.get("src/audio/mp3/yeehaw.mp3").toUri().toString());
         
@@ -1372,6 +1430,12 @@ public class GUIManager extends Application {
             setMenuGrid();
 
         } else if (GMode == GUIMode.GAME) {
+
+//            String image = JavaFXApplication9.class.getResource("/img/junk/junkBg3.png").toExternalForm();
+//            hbMid.setStyle("-fx-background-image: url('" + image + "'); " +
+//           "-fx-background-position: left top; " +
+//           "-fx-background-size:   2500,200  ; " +
+//           "-fx-background-repeat: stretch;");
 
             initPonds();
             initLanes(s);
@@ -1435,6 +1499,15 @@ public class GUIManager extends Application {
         });
         
         new Thread(intro).start();
+        
+final Timeline timeline = new Timeline();
+timeline.setCycleCount(Timeline.INDEFINITE);
+timeline.setAutoReverse(true);
+final KeyValue kv = new KeyValue(mower.xProperty(), 500);
+final KeyFrame kf = new KeyFrame(Duration.millis(2000), kv);
+timeline.getKeyFrames().add(kf);
+
+timeline.play();
 
         /**
         *Gestion objets / mouvements
@@ -1538,14 +1611,15 @@ public class GUIManager extends Application {
                     
                     junkMinY = 85;
                     
+                    
                     //gestion tondeuse
                     mower_mp.play();
                     //if (mower.getLayoutX() > sc.getWidth() + 600) {//2000
                     if (mower.getLayoutX() < -600) {//2000
-                        mower.setLayoutX(sc.getWidth() + 600);
+                        //mower.setLayoutX(sc.getWidth() + 600);
                         
                     } else {
-                        mower.setLayoutX(mower.getLayoutX() - 5);
+                        //mower.setLayoutX(mower.getLayoutX() - 5);
                         mower.setLayoutY(carMinY - 40);
                     }
                     
@@ -1556,6 +1630,16 @@ public class GUIManager extends Application {
                         //mower_mp.setBalance(sc.getWidth()/(mower.getLayoutX()*2));
                         //System.out.println("'''"+mower_mp.getBalance());  
                     }
+                    
+                    
+
+
+
+
+
+
+
+
 
                     //cadrage XY voitures
                     int a, b;
@@ -1856,7 +1940,7 @@ public class GUIManager extends Application {
             }
 
             //RELOCATES
-            
+
             for (f = 0; f < cars.size(); f++) {
                 cars.get(f).relocate(cars.get(f).getLayoutX(), carMinY-1);
             }
