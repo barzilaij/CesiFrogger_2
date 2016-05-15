@@ -15,38 +15,29 @@ public class Bug {
     private String position;
 
     /**
-     * Get the value of position
-     *
-     * @return the value of position
-     */
+    *Pour obtenir la position (index mare)
+    * 
+    * @author jb
+    * @version %v%
+    */
     public String getPosition() {
         return position;
     }
 
     /**
-     * Set the value of position
-     *
-     * @param position new value of position
-     */
+    *Pour déterminer la position (index mare)
+    * 
+    * @author jb
+    * @version %v%
+    */
     public void setPosition(String position) {
         this.position = position;
     }
 
-
-    /**
-     * Get the value of id
-     *
-     * @return the value of id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Set the value of id
-     *
-     * @param id new value of id
-     */
     public void setId(String id) {
         this.id = id;
     }

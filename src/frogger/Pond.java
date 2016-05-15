@@ -9,9 +9,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 /**
- *
- * @author jb
- */
+*Classe Mare avec flags d'état
+* 
+* @author jb
+* @version %v%
+*/
 public class Pond extends ImageView{
     
     static public enum Status {

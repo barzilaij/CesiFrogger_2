@@ -124,7 +124,7 @@ public class GameManager {
     }
     
     /**
-    *Chargement des données du jeu
+    *Sauvegarde des données du jeu
     * au format .properties
     * <p>
     * 
@@ -187,7 +187,7 @@ public class GameManager {
         TextInputDialog dialog = new TextInputDialog(" ");
         dialog.initModality(Modality.NONE);
         dialog.setTitle("Name Input Dialog");
-        dialog.setHeaderText("Three froggin' ponds ! ");
+        //dialog.setHeaderText("Three froggin' ponds ! ");
         dialog.setContentText("Please enter your name: ");
         Optional<String> result = dialog.showAndWait();
         

@@ -8,10 +8,13 @@ package frogger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+
 /**
- *
- * @author jb
- */
+*Voiture avec vitesse
+* 
+* @author jb
+* @version %v%
+*/
 public class Car extends ImageView{
     
     double speed;

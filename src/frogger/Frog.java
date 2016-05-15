@@ -22,9 +22,11 @@ import javafx.scene.shape.VLineTo;
 import javafx.util.Duration;
 
 /**
- *
- * @author jb
- */
+*Classe grenouille avec champs de vitesse, d'état
+* 
+* @author jb
+* @version %v%
+*/
 public class Frog extends ImageView{
     
     static public enum Status {
@@ -48,7 +50,12 @@ public class Frog extends ImageView{
         setImage(i);
         
     }
-    
+    /**
+    *Implémentation future
+    * 
+    * @author jb
+    * @version %v%
+    */
     public void doJumpVisual(Node n,Duration d){
         
         Path p = new Path();

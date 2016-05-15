@@ -8,10 +8,13 @@ package frogger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+
 /**
- *
- * @author jb
- */
+*Ordure avec données de vitesse et de positionnement
+* 
+* @author jb
+* @version %v%
+*/
 public final class Junk extends ImageView{
     
     static public enum Direction {

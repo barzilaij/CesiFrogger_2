@@ -15,9 +15,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 /**
- *
- * @author jb
- */
+*Création d'objets jeu avec paramètres
+* 
+* @author jb
+* @version %v%
+*/
 public class Game implements Comparable<Game>{
     
     static public enum Level {
@@ -43,6 +45,12 @@ public class Game implements Comparable<Game>{
     public int frogTimeLimit  = 60;
     int gameTimeLimit  = 4*frogTimeLimit;
     
+    /**
+    *Constructeur avec paramètre Level
+    * 
+    * @author jb
+    * @version %v%
+    */
     Game(Level l) {
         
         id++;
@@ -60,12 +68,13 @@ public class Game implements Comparable<Game>{
         this.tl = tl;
     }
 
-//        return player;
-//    }
-//
-//    public void setPlayer(String player) {
-//        this.player = player;
-//    }
+    /**
+    *Mise en place de grenouille courante
+    *avec mise à jour chronomètre
+    * 
+    * @author jb
+    * @version %v%
+    */
     public void setNextFrog() {    //  !!!   doublon runninfrog dans Game   !!!
         GUIManager.setRunningFrog(Frog.Status.RUNNING);
         frogTime=0;
@@ -81,6 +90,12 @@ public class Game implements Comparable<Game>{
         this.frogTime = frogTime;
     }
     
+    /**
+    *Gestion générale des grenouilles
+    * 
+    * @author jb
+    * @version %v%
+    */
     void updateFrogManagement(){
         
         if (frogTime<frogTimeLimit){
@@ -113,6 +128,12 @@ public class Game implements Comparable<Game>{
         o = (Number)gameTime;
     }
     
+    /**
+    *Donnée calculée: nombre total grenouilles dans les mares
+    * 
+    * @author jb
+    * @version %v%
+    */
     int getLandedFrogsTotal(){
         
         int j;
@@ -125,7 +146,12 @@ public class Game implements Comparable<Game>{
     }
     
 
-    
+     /**
+    **Mise à jour du temps passé avec affichage
+    * 
+    * @author jb
+    * @version %v%
+    */
     public void setDashboardUpdater(){
 
         this.frogTime = 0;
@@ -208,7 +234,12 @@ public class Game implements Comparable<Game>{
         this.player = player;
     }
     
-    
+    /**
+    *Comparaison des scores
+    * 
+    * @author jb
+    * @version %v%
+    */
     @Override
     public int compareTo(Game other) {
         return Integer.valueOf(score).compareTo(Integer.valueOf(other.score));
