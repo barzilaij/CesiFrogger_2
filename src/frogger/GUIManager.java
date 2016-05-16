@@ -157,18 +157,19 @@ public class GUIManager extends Application {
     ImageView mower = new ImageView(mwer);
     
     static MediaPlayer background_mp;
-    static MediaPlayer funnyimact_mp;
+    static MediaPlayer impact_mp;
     static MediaPlayer dplash2_mp;
     static MediaPlayer carsMix_mp;
     static MediaPlayer bug_mp;
-    static MediaPlayer yeehaw_mp;
     static MediaPlayer mower_mp;
     
     static AudioClip greatbell1Sound;
+    static AudioClip duck1Sound;
     static AudioClip yeehawSound;
+    static AudioClip pondSplashSound;
     
     long lastUpdate = 0 ;
-    
+
     static int candidate=0;
     static int refTime=1;
 
@@ -186,8 +187,12 @@ public class GUIManager extends Application {
     public static double frogStartPos_X, frogStartPos_Y;
     double space, tmp;
     
-    double carMinY, carMaxY, pondsOffset;
-    
+    double carMinY, carMaxY, pondsOffset; 
+    double mowerOffsetL;
+    double mowerOffsetR;
+    double mowerRange;
+    char mowerDir;
+
     double junkMinY, junkMaxY;
     double carSpeedLimit, initCarIndividualSpeed, individualCarSpeedIncr;
     byte lanesMode;
@@ -233,7 +238,7 @@ public class GUIManager extends Application {
     VBox rightLabelsSubL = new VBox();
     VBox rightLabelsSubR = new VBox();
     
-    static Group g1,g2,g3,g4,g5;
+    static Group g1,g2,g3,g4,g5,g6;
     
     static public Text playerLabel = new Text();
     static public Text scoreLabel = new Text();
@@ -338,20 +343,20 @@ public class GUIManager extends Application {
         rb1 = new RadioButton("Beginner");
         rb1.setToggleGroup(levelSelector);
         rb1.setUserData(Game.Level.BEGINNER);
-        rb1.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 14));
+        rb1.setFont(Font.font(fontFamily_1, FontWeight.EXTRA_BOLD, 14));
         rb1.setTextFill(Color.web("#fff"));
         rb1.setSelected(true);
 
         rb2 = new RadioButton("Confirmed");
         rb2.setToggleGroup(levelSelector);
         rb2.setUserData(Game.Level.CONFIRMED);
-        rb2.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 14));
+        rb2.setFont(Font.font(fontFamily_1, FontWeight.EXTRA_BOLD, 14));
         rb2.setTextFill(Color.web("#fff"));
 
         rb3 = new RadioButton("Expert");
         rb3.setToggleGroup(levelSelector);
         rb3.setUserData(Game.Level.EXPERT);
-        rb3.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 14));
+        rb3.setFont(Font.font(fontFamily_1, FontWeight.EXTRA_BOLD, 14));
         rb3.setTextFill(Color.web("#fff"));
 
         levelSelector.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -359,7 +364,8 @@ public class GUIManager extends Application {
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
                 if (levelSelector.getSelectedToggle() != null) {
-                    GameManager.alertMsg(levelSelector.getSelectedToggle().getUserData().toString());
+                    GameManager.getCurrentGame().setLevel((Game.Level)levelSelector.getSelectedToggle().getUserData());
+                    //GameManager.alertMsg(GameManager.getCurrentGame().getLevel().toString());
                 }
             }
         });
@@ -378,7 +384,7 @@ public class GUIManager extends Application {
         menuGrid.getStyleClass().add("menuGrid");
         menuGrid.setHgap(60);
         menuGrid.setVgap(5);
-        menuGrid.setPadding(new Insets(15, 15, 15, 15));
+        menuGrid.setPadding(new Insets(40, 15, 40, 15));
         menuGrid.setMaxWidth(500);
         menuGrid.setMaxHeight(300);
         //menuGrid.setGridLinesVisible(true);
@@ -387,37 +393,39 @@ public class GUIManager extends Application {
         setRadioButts();
 
         Label topLabel = new Label("FROGGER 16");
-        topLabel.setFont(Font.font(fontFamily_1, FontWeight.BOLD, 24));
+        topLabel.setFont(Font.font(fontFamily_1, FontWeight.BOLD, 36));
         topLabel.setTextFill(Color.web("#80ff00"));
-        //topLabel.setFont(new Font("Arial", 16));
         topLabel.setPadding(new Insets(10, 10, 10, 10));
         menuGrid.add(topLabel, 0, 0, 2, 1);
 
-        //ImageView imageHouse = new ImageView(
-        //new Image(LayoutSample.class.getResourceAsStream("graphics/house.png")));
-        Label leftLabel = new Label("Highest scores:");
+        Label leftLabel = new Label("Highest \nscores:");
         leftLabel.setFont(Font.font(fontFamily_1, FontWeight.BOLD, 24));
         leftLabel.setTextFill(Color.web("#80ff00"));
-        leftLabel.setPadding(new Insets(10, 10, 10, 0));
+        leftLabel.setPadding(new Insets(0, 0, 5, 0));
         menuGrid.add(leftLabel, 0, 1);
+        
         Label rightLabel = new Label("Options:");
         rightLabel.setFont(Font.font(fontFamily_1, FontWeight.BOLD, 24));
         rightLabel.setTextFill(Color.web("#80ff00"));
-        rightLabel.setPadding(new Insets(10, 10, 10, 0));
+        rightLabel.setPadding(new Insets(10, 0, 20, 0));
         menuGrid.add(rightLabel, 1, 1);
 
-        score1.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 18));
-        score1.setFill(Color.rgb(0, 255, 0));
+        score1.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 14));
+        score1.setFill(Color.web("#fff"));
         menuGrid.add(score1, 0, 2);
-        score2.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 18));
-        score2.setFill(Color.rgb(0, 255, 0));
+        score2.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 14));
+        score2.setFill(Color.web("#fff"));
         menuGrid.add(score2, 0, 3);
-        score3.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 18));
-        score3.setFill(Color.rgb(0, 255, 0));
+        score3.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 14));
+        score3.setFill(Color.web("#fff"));
         menuGrid.add(score3, 0, 4);
 
+//        playButt.setPadding(new Insets(100, 0, 0, 0));
+//        quitButt.setPadding(new Insets(100, 0, 0, 0));
+        
         Text empty_1 = new Text("");
         Text empty_2 = new Text("");
+        //empty_2.setStyle("height:200px");
         menuGrid.add(empty_1, 0, 5, 2, 1);
         menuGrid.add(playButt, 0, 6);
         menuGrid.add(rb1, 1, 2);
@@ -430,7 +438,7 @@ public class GUIManager extends Application {
         GridPane.setHalignment(playButt, HPos.CENTER);
         GridPane.setValignment(playButt, VPos.BOTTOM);
         GridPane.setValignment(quitButt, VPos.BOTTOM);
-        GridPane.setHalignment(quitButt, HPos.CENTER);
+        GridPane.setHalignment(quitButt, HPos.LEFT);
 
         hbMid.setAlignment(Pos.CENTER);
         hbMid.getChildren().clear();
@@ -452,6 +460,14 @@ public class GUIManager extends Application {
         ft.setFromValue(0.0);
         ft.setToValue(1.0);
         ft.play();
+    }
+    
+    void initBg() {
+        StackPane sp = new StackPane();
+        sp.getChildren().add(roadLane_M3);
+        sp.getChildren().add(hbMid);
+
+        root.setCenter(sp);   
     }
 
     double getPondSpace() {
@@ -588,7 +604,6 @@ public class GUIManager extends Application {
         lanes.add(waterLanes.get(1));
         lanes.add(waterLanes.get(2));
         lanes.add(waterLanes.get(3));
-        //lanes.add(waterLanes.get(4));
         lanes.add(lawnLane);
         lanes.add(roadLanes.get(0));
         lanes.add(roadLanes.get(1));
@@ -769,6 +784,44 @@ public class GUIManager extends Application {
         //}
 
     }
+    
+    /**
+    * Aspect visuel grenouille tondue
+    * 
+    * @author jb
+    * @version %v%
+    */
+    void mow(Frog f){
+        
+        //mower_mp.setRate(.5);
+        mower_mp.setVolume(2);
+        //if (!duck1Sound.isPlaying()){
+            duck1Sound.play();
+        //}
+        
+        f.setStatus(Frog.Status.MOWED);
+        RotateTransition rt=new RotateTransition(Duration.millis(2000),f);
+                rt.setByAngle(180f);
+                f.setScaleX(.5);
+                f.setScaleY(2);
+                ScaleTransition st = new ScaleTransition(Duration.millis(1000),f);
+                st.setToX(1);
+                st.setToY(1);
+                ParallelTransition pt = new ParallelTransition();
+                pt.getChildren().addAll(rt,st);
+                pt.play();
+                
+                pt.setOnFinished(new EventHandler<ActionEvent>(){
+                    @Override
+                    public void handle(ActionEvent e) {
+                        eraseFrog();
+                        //root.getChildren().remove(runningFrog);
+                        //setRunningFrog(Frog.Status.RUNNING);
+                        
+                    }
+                });
+
+    }
 
     /**
     * Fonction clé:
@@ -802,13 +855,15 @@ public class GUIManager extends Application {
             @Override
             public void handle(KeyEvent e) {
                 
-//                //Yeehaw
-//                int c;
-//                    for (c = 0; c < junk.size(); c++) {
-//                        if (  runningFrog.getLayoutY() < 210 ^ junk.get(c).getBoundsInParent().intersects(runningFrog.getBoundsInParent())){
-//                            yeehawSound.play();    
-//                        }
-//                    }
+                    
+                    int c;
+                    for (c = 0; c < junk.size(); c++) {
+                        if (junk.get(c).getBoundsInParent().intersects(runningFrog.getBoundsInParent())){
+                               yeehawSound.play();
+                        }else if(runningFrog.getLayoutY() < 250){
+                            //yeehawSound.play(); 
+                    }
+                    }
  
             //alertMsg("***"+arrowKeysEnabled);
             if (arrowKeysEnabled){
@@ -849,10 +904,8 @@ public class GUIManager extends Application {
 
                                             //pond dispo
                                             if (ponds.get(p).status == Pond.Status.EMPTY) {
-
-                                                System.out.println("$  OK");
-
-                                                //runningFrog.relocate(ponds.get(p).getLayoutX()+30, 0);
+                                                
+                                                pondSplashSound.play();
                                                 runningFrog.relocate(ponds.get(p).getLayoutX() + 29, ponds.get(p).getLayoutY()+15);
                                                 runningFrog.status = Frog.Status.HOME;
                                                 ponds.get(p).setStatus(Pond.Status.FROGGED);
@@ -899,7 +952,7 @@ public class GUIManager extends Application {
                                 } else{
                                     
                                     //g.setEffect(new BoxBlur(3, 3, 3));//w h iter
-                                    //setCircles(g1);
+                                    //setParticles(g1);
                                     runningFrog.relocate(runningFrog.getLayoutX(), runningFrog.getLayoutY() - Frog.frogLeap);
                                     if (runningFrog.getLayoutY()<junkMaxY+50){
                                         drown(runningFrog);
@@ -911,38 +964,44 @@ public class GUIManager extends Application {
                                 break;
 
                             case "DOWN":
-                                if (runningFrog.getLayoutY() < frogStartPos_Y) {
-                                    //GET BACK FROM LOWEST LANE
-                                    if (runningFrog.getLayoutY() == hbTop.getLayoutY() + lanesMode * 50 + 27 + smallFrogOffset) {
-                                        getFrogStartPos();
-                                        runningFrog.relocate(frogStartPos_X, frogStartPos_Y);
-                                        updateScore(-10);
-                                    //JUMP DOWN
-                                    } else {
-                                        runningFrog.relocate(runningFrog.getLayoutX(), runningFrog.getLayoutY() + Frog.frogLeap);
-                                        if (runningFrog.getLayoutY()<junkMaxY+50){
-                                            drown(runningFrog);
-                                        }else{
-                                            updateScore(-10);    
-                                        }   
+                                if (runningFrog.getLayoutY() != frogStartPos_Y){
+                                    if (runningFrog.getLayoutY() < frogStartPos_Y) {
+                                        //GET BACK FROM LOWEST LANE
+                                        if (runningFrog.getLayoutY() == hbTop.getLayoutY() + lanesMode * 50 + 27 + smallFrogOffset) {
+                                            getFrogStartPos();
+                                            runningFrog.relocate(frogStartPos_X, frogStartPos_Y);
+                                            updateScore(-10);
+                                        //JUMP DOWN
+                                        } else {
+                                            runningFrog.relocate(runningFrog.getLayoutX(), runningFrog.getLayoutY() + Frog.frogLeap);
+                                            if (runningFrog.getLayoutY()<junkMaxY+50){
+                                                drown(runningFrog);
+                                            }else{
+                                                updateScore(-10);    
+                                            }   
+                                        }
                                     }
                                 }
                                 break;
                                 
-                            case "LEFT":                            
+                            case "LEFT":   
+                                if (runningFrog.getLayoutY() != frogStartPos_Y){
                                 //LEAP OR DROWN
-                                runningFrog.relocate(runningFrog.getLayoutX() - Frog.frogLeap, runningFrog.getLayoutY());
-                                //System.out.println("---------"+runningFrog.getStatus());
-                                if (runningFrog.getLayoutY()<junkMaxY+50){
-                                    drown(runningFrog);
+                                    runningFrog.relocate(runningFrog.getLayoutX() - Frog.frogLeap, runningFrog.getLayoutY());
+                                    //System.out.println("---------"+runningFrog.getStatus());
+                                    if (runningFrog.getLayoutY()<junkMaxY+50){
+                                        drown(runningFrog);
+                                    }
                                 }
                                 break;
                                 
                             case "RIGHT":
-                                runningFrog.relocate(runningFrog.getLayoutX() + Frog.frogLeap, runningFrog.getLayoutY());
-                                //System.out.println("---------"+runningFrog.getStatus());
-                                if (runningFrog.getLayoutY()<junkMaxY+50){
-                                    drown(runningFrog);
+                                if (runningFrog.getLayoutY() != frogStartPos_Y){
+                                    runningFrog.relocate(runningFrog.getLayoutX() + Frog.frogLeap, runningFrog.getLayoutY());
+                                    //System.out.println("---------"+runningFrog.getStatus());
+                                    if (runningFrog.getLayoutY()<junkMaxY+50){
+                                        drown(runningFrog);
+                                    }
                                 }
                                 break;
                             default:
@@ -1004,7 +1063,7 @@ public class GUIManager extends Application {
         userInputGrid.setMaxHeight(300);
         userInputGrid.setAlignment(Pos.CENTER);
 
-        Label topLabel = new Label("3 frogged ponds ! !\nPlease enter your name :");
+        Label topLabel = new Label("3 ponds !\nPlease enter your name :");
         topLabel.setFont(Font.font(fontFamily_0, FontWeight.BOLD, 22));
         topLabel.setTextFill(Color.web("#80ff00"));
         topLabel.setPadding(new Insets(10, 10, 10, 10));
@@ -1315,8 +1374,7 @@ public class GUIManager extends Application {
         for (i = 0; i < cars.size(); i++) {
             root.getChildren().add(cars.get(i));
         }
-
-        root.getChildren().add(mower);
+ 
     }
     
     void addJunk() {
@@ -1342,9 +1400,9 @@ public class GUIManager extends Application {
         Media dplash2_m = new Media(new File(dplash2).toURI().toString());
         dplash2_mp = new MediaPlayer(dplash2_m);
         
-        String funnyimact = "src/audio/mp3/funnyimact.mp3";
-        Media funnyimact_m = new Media(new File(funnyimact).toURI().toString());
-        funnyimact_mp = new MediaPlayer(funnyimact_m);
+        String impact = "src/audio/mp3/impact.mp3";
+        Media impact_m = new Media(new File(impact).toURI().toString());
+        impact_mp = new MediaPlayer(impact_m);
 
         String background = "src/audio/mp3/background.mp3";
         Media background_m = new Media(new File(background).toURI().toString());
@@ -1358,32 +1416,28 @@ public class GUIManager extends Application {
         Media bug_m = new Media(new File(bug).toURI().toString());
         //bug_mp = new MediaPlayer(bug_m);
         
-//        String yeehaw = "src/audio/mp3/yeehaw.mp3";
-//        Media yeehaw_m = new Media(new File(yeehaw).toURI().toString());
-//        yeehaw_mp = new MediaPlayer(yeehaw_m);
-        
         String mower = "src/audio/mp3/mower.mp3"; 
         Media mower_m = new Media(new File(mower).toURI().toString());
         mower_mp = new MediaPlayer(mower_m);
         mower_mp.setCycleCount(1000);
-        
-        
-        
+
         greatbell1Sound = new AudioClip(Paths.get("src/audio/mp3/greatbell1.mp3").toUri().toString());
-        yeehawSound = new AudioClip(Paths.get("src/audio/mp3/yeehaw.mp3").toUri().toString());
+        duck1Sound = new AudioClip(Paths.get("src/audio/mp3/duck1.mp3").toUri().toString());
+        yeehawSound = new AudioClip(Paths.get("src/audio/mp3/yeehawCut.mp3").toUri().toString());
+        pondSplashSound = new AudioClip(Paths.get("src/audio/mp3/pondSplash.mp3").toUri().toString());
         
         dplash2_mp.play();
 
     }
     
-    static void setCircles(Group g){
+    static void setParticles(Group g, double d, double o ,double dur, double s){
         
         g = new Group();
-        for (int i = 0; i < 1000; i++) {
-           Circle circle = new Circle(3, Color.web("black", 1));
+        for (int i = 0; i < 1; i++) {
+           Circle circle = new Circle(d, Color.web("black", 1));
            circle.setCenterX(0f);
             circle.setCenterY(300.0f);
-            //circle.setOpacity(0.5);
+            circle.setOpacity(o);
            g.getChildren().add(circle);
         }
 
@@ -1398,9 +1452,9 @@ public class GUIManager extends Application {
                     new KeyValue(circle.translateXProperty(), random() * 1400),
                     new KeyValue(circle.translateYProperty(), random() * 300)//10
                 ),
-                new KeyFrame(new Duration(40000), // set end position at 40s
+                new KeyFrame(new Duration(dur), // set end position at 40s
                     new KeyValue(circle.translateXProperty(), random() * 1400),
-                    new KeyValue(circle.translateYProperty(), random() * 300)
+                    new KeyValue(circle.translateYProperty(), random() * s)
                 )
             );
             
@@ -1431,11 +1485,11 @@ public class GUIManager extends Application {
 
         } else if (GMode == GUIMode.GAME) {
 
-//            String image = JavaFXApplication9.class.getResource("/img/junk/junkBg3.png").toExternalForm();
-//            hbMid.setStyle("-fx-background-image: url('" + image + "'); " +
-//           "-fx-background-position: left top; " +
-//           "-fx-background-size:   2500,200  ; " +
-//           "-fx-background-repeat: stretch;");
+            String image = JavaFXApplication9.class.getResource("/img/junk/junkBg4.png").toExternalForm();
+            hbMid.setStyle("-fx-background-image: url('" + image + "'); " +
+           "-fx-background-position: left top; " +
+           "-fx-background-size:   2500,200  ; " +
+           "-fx-background-repeat: stretch;");
 
             initPonds();
             initLanes(s);
@@ -1443,9 +1497,17 @@ public class GUIManager extends Application {
             initCars();
             initJunk();
             addCars();
+            if (GameManager.getCurrentGame().getLevel()!=Game.Level.BEGINNER){
+                root.getChildren().add(mower);
+                mower.setLayoutX(sc.getWidth() + 700);
+                mowerRange=200;
+                mowerOffsetL = 700;
+                mowerOffsetR = mowerOffsetL+mowerRange;
+                mowerDir = 'L';
+                mower_mp.play();
+            }
             addJunk();
-            //setCircles(g1);
-            
+
             initFrogs();
 
             //bug.setRotate(90);
@@ -1499,15 +1561,8 @@ public class GUIManager extends Application {
         });
         
         new Thread(intro).start();
-        
-final Timeline timeline = new Timeline();
-timeline.setCycleCount(Timeline.INDEFINITE);
-timeline.setAutoReverse(true);
-final KeyValue kv = new KeyValue(mower.xProperty(), 500);
-final KeyFrame kf = new KeyFrame(Duration.millis(2000), kv);
-timeline.getKeyFrames().add(kf);
-
-timeline.play();
+    
+        //playMowerOnce(root);    
 
         /**
         *Gestion objets / mouvements
@@ -1540,6 +1595,23 @@ timeline.play();
             public void handle(long now) {
 
                 if (GMode == GUIMode.GAME) {
+                    if (GameManager.getCurrentGame().getLevel()==Game.Level.EXPERT){
+                        if (GameManager.getCurrentGame().getGameTime()==2.0000000){
+                            setParticles(g1,10,0.3,12000,300);
+                        }else if (GameManager.getCurrentGame().getGameTime()==6.0000000){
+                            setParticles(g2,15,0.4,10000,300);
+                        }else if (GameManager.getCurrentGame().getGameTime()==8.0000000){
+                            setParticles(g3,20,0.5,15000,300);
+                        }else if (GameManager.getCurrentGame().getGameTime()==12.0000000){
+                            setParticles(g4,25,0.6,5000,300);
+                        }else if (GameManager.getCurrentGame().getGameTime()==16.0000000){
+                            setParticles(g5,40,0.7,10000,300);
+                        }else if (GameManager.getCurrentGame().getGameTime()==20.0000000){
+                            setParticles(g6,50,0.7,30000,300);
+                        }
+                        //g6.relocate(0, 0);
+                        
+                }
 
                     //gestion du bug
                     if (GameManager.getCurrentGame().getGameTime()==refTime/10){
@@ -1565,20 +1637,7 @@ timeline.play();
                         refTime+=5;
    
                     }
-
-//           if (now - lastUpdate >= 140_000_000) {
-//       
-//                g.getChildren().stream().forEach((circle) -> {
-//                    circle.setLayoutX(random() * sc.getWidth());
-//                    //circle.setTranslateX(random() * sc.getWidth());
-//                    //circle.setTranslateY(sc.getHeight()-75));
-//                    //circle.translateXProperty(random() * sc.getWidth());
-//                    circle.setLayoutY(75+random() * (sc.getHeight()-75)); 
-//                });
-//                lastUpdate = now ;
-//            }
-
-                    //paramétrage selon nombre de voies
+                    
                     switch (lanesMode) {
                         case 2:
                             carMinY = 126;
@@ -1612,34 +1671,36 @@ timeline.play();
                     junkMinY = 85;
                     
                     
-                    //gestion tondeuse
-                    mower_mp.play();
-                    //if (mower.getLayoutX() > sc.getWidth() + 600) {//2000
-                    if (mower.getLayoutX() < -600) {//2000
-                        //mower.setLayoutX(sc.getWidth() + 600);
-                        
-                    } else {
-                        //mower.setLayoutX(mower.getLayoutX() - 5);
-                        mower.setLayoutY(carMinY - 40);
+                    //MOWER
+                    mowerOffsetL--;
+                    mowerOffsetR--;
+                    
+                    if (mower.getLayoutX() < -50) {//2000    
+                        mowerOffsetL = 700;
+                        mowerOffsetR = mowerOffsetL+mowerRange;
+                        mower.setLayoutX(sc.getWidth() + 50);
+                    }else if (mower.getLayoutX() < 400) {
+                        mower.setLayoutX(mower.getLayoutX()-10); 
+                    }else {
+                        if (mowerDir=='L'){
+                            if (mower.getLayoutX()>mowerOffsetL && mower.getLayoutX()>mowerOffsetR){
+                                mower.setLayoutX(mower.getLayoutX()-10);
+                                mower.setLayoutY(carMinY - 40);
+                            }else if(mower.getLayoutX()>mowerOffsetL && mower.getLayoutX()<mowerOffsetR){
+                                mower.setLayoutX(mower.getLayoutX()-5);
+                            }else if (mower.getLayoutX()<mowerOffsetL && mower.getLayoutX()<mowerOffsetR){
+                                mower.setLayoutX(mower.getLayoutX()+5);
+                                mowerDir='R';
+                            }
+                        }else{
+                            if (mower.getLayoutX()<mowerOffsetR){
+                                mower.setLayoutX(mower.getLayoutX()+5);
+                            }else if (mower.getLayoutX()>mowerOffsetR){
+                                mower.setLayoutX(mower.getLayoutX()-5);
+                                mowerDir='L';
+                            }
+                        }   
                     }
-                    
-                    if  (mower.getLayoutX()<0 || mower.getLayoutX()>sc.getWidth()){
-                        mower_mp.setVolume(0);
-                    }else{
-                        mower_mp.setVolume(1);   
-                        //mower_mp.setBalance(sc.getWidth()/(mower.getLayoutX()*2));
-                        //System.out.println("'''"+mower_mp.getBalance());  
-                    }
-                    
-                    
-
-
-
-
-
-
-
-
 
                     //cadrage XY voitures
                     int a, b;
@@ -1697,15 +1758,13 @@ timeline.play();
                         if (runningFrog != null) {
                             try {
                                 if (cars.get(r).getBoundsInParent().intersects(runningFrog.getBoundsInParent())) {
-                                    //funnyimact_mp.setCycleCount(10);
+                                    //impact_mp.setCycleCount(10);
                                 try{
-                                        funnyimact_mp.stop();
+                                        impact_mp.stop();
                                 }catch(Error e){
 
                                 }
-                                    funnyimact_mp.play();
-                                    //System.out.println("c:  " + cars.get(r).getBoundsInParent());
-                                    //System.out.println("f:  " + runningFrog.getBoundsInParent());
+                                    impact_mp.play();
                                     root.getChildren().remove(frogOutline);
                                     root.getChildren().add(3, frogOutline);
                                     frogOutline.setOpacity(1);
@@ -1719,6 +1778,17 @@ timeline.play();
                             }
                         }
                     }
+                    
+                    //gestion tondeuse
+                    if (GameManager.getCurrentGame().getLevel()!=Game.Level.BEGINNER 
+                            && mower.getBoundsInParent().intersects(runningFrog.getBoundsInParent())) {
+                        mow(runningFrog); 
+                        //root.getChildren().remove(frogOutline);
+                        //root.getChildren().remove(runningFrog);
+                                    //root.getChildren().add(3, frogOutline);
+                                    //frogOutline.setOpacity(1);
+                    }
+                    
                     
                     //gestion ordures
                     junkRotateValue++;
@@ -1746,19 +1816,14 @@ timeline.play();
                             //junk.get(c).relocate(junk.get(c).getLayoutX() + (junk.get(c).getSpeed()+(g-Junk.speedFactor)), junk.get(c).getLayoutY());   
                         }
 
+
                         //intersection ordure/grenouille
                         if (runningFrog != null) {
                             try {
-                                
-                                //System.out.println("image   "+junk.get(s).toString());
                                 if (junk.get(c).getBoundsInParent().intersects(runningFrog.getBoundsInParent())) {
                                     ft.stop();
                                     runningFrog.setStatus(Frog.Status.FLOATING);
-                                    //System.out.println("---------"+runningFrog.getStatus());
-                                    
-                                    //yeehawSound.play();
                                     runningFrog.relocate(junk.get(c).getLayoutX(), junk.get(c).getLayoutY());
-                                    
                                  }
                             } catch (Error e) {
                                 GameManager.alertMsg(e.getMessage());
@@ -1791,6 +1856,24 @@ timeline.play();
         //Thread.sleep(2000);
         //hbMid.getChildren().remove(splash);
 
+    }
+    
+    /**
+    *Aller retour simple tondeuse
+    * 
+    * @author jb
+    * @version %v%
+    */
+    void playMowerOnce(BorderPane bp){      
+       
+        final Timeline timeline = new Timeline();
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.setAutoReverse(true);
+        final KeyValue kv = new KeyValue(mower.xProperty(),1500 );
+        final KeyFrame kf = new KeyFrame(Duration.millis(8000), kv);
+        timeline.getKeyFrames().add(kf);
+        timeline.play();
+        
     }
     
     /**
