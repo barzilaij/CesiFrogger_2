@@ -62,7 +62,9 @@ public class GUIManager extends Application {
 
     @Override
     public void start(Stage st)throws InterruptedException {
-
+        
+        //System.out.println(""+System.getProperty("java.class.path"));
+        //getHostServices().getDocumentBase();
         root = new BorderPane();
         sc = new Scene(root);
         design.initScene(root, sc, st);
@@ -90,7 +92,7 @@ public class GUIManager extends Application {
                 gma.setGMode(GameManager.GUIMode.MENU);
                 gma.setCurrentGame(new Game());
                 setGUI(GameManager.getGMode());
-                io.loadGamesFile("games.properties");
+                io.loadGamesFile("file:games.properties");
                 mn.setScoresDisplay(IO.getGames());
                 //initGame((Game.Level)(Object)levelSelector.getSelectedToggle().getUserData());
                 

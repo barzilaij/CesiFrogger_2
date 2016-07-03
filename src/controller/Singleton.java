@@ -1,10 +1,8 @@
 package controller;
 
-import javafx.animation.Animation;
 import view.GUIDesign;
 import model.Graphics;
 import model.IO;
-import view.Animator;
 
 public class Singleton {
     

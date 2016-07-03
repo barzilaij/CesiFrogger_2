@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+
+<project name="FroggerApp_B" default="default" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
+    
+    <property name="JAVA_HOME" value="C:\\Program Files\\Java\\jdk1.8.0_65"/>
+
+    <property name="build.src.dir" value="src"/>
+    <property name="build.classes.dir" value="classes"/>
+    <property name="build.dist.dir" value="dist"/>
+ 
+    <target name="default" depends="clean,compile">
+ 
+    <taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
+        uri="javafx:com.sun.javafx.tools.ant"
+        classpath="${JAVA_HOME}/lib/ant-javafx.jar"/>
+ 
+      <fx:application id="FroggerApp_BID"
+        name="JavaFXFroggerApp_BApp"
+        mainClass="view.GUIManager"/>
+ 
+      <fx:resources id="appRes">
+        <fx:fileset dir="${build.dist.dir}" includes="FroggerApp_B.jar"/>
+      </fx:resources>
+ 
+      <fx:jar destfile="${build.dist.dir}/FroggerApp_B.jar">
+        <fx:application refid="FroggerApp_BID"/>
+        <fx:resources refid="appRes"/>
+        <fileset dir="${build.classes.dir}"/>
+      </fx:jar>
+ 
+      <fx:deploy width="300" height="250"
+        outdir="." embedJNLP="true"
+        outfile="FroggerApp_B"
+        nativeBundles="all">
+ 
+        <fx:application refId="FroggerApp_BID"/>
+ 
+        <fx:resources refid="appRes"/>
+ 
+        <fx:info title="JavaFX FroggerApp_B Application"
+          vendor="Oracle Corporation"/>
+ 
+      </fx:deploy>
+ 
+  </target>
+  
+ <target name="jar" description="JARs the Task">
+        <jar destfile="MyTask.jar" basedir="classes"/>
+    </target>
+ 
+  <target name="clean">
+    <mkdir dir="${build.classes.dir}"/>
+    <mkdir dir="${build.dist.dir}"/>
+
+    <delete>
+      <fileset dir="${build.classes.dir}" includes="**/*"/>
+      <fileset dir="${build.dist.dir}" includes="**/*"/>
+    </delete>
+ 
+  </target>
+ 
+  <target name="compile" depends="clean">
+ 
+    <javac includeantruntime="false"
+      srcdir="${build.src.dir}"
+      destdir="${build.classes.dir}"
+      fork="yes"
+      executable="${JAVA_HOME}/bin/javac"
+      source="1.8"
+      debug="on">
+    </javac>
+  </target>
+
+    <!--
+
+    There exist several targets which are by default empty and which can be 
+    used for execution of your tasks. These targets are usually executed 
+    before and after some main targets. They are: 
+
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before javac compilation
+      -post-compile:             called after javac compilation
+      -pre-compile-single:       called before javac compilation of single file
+      -post-compile-single:      called after javac compilation of single file
+      -pre-compile-test:         called before javac compilation of JUnit tests
+      -post-compile-test:        called after javac compilation of JUnit tests
+      -pre-compile-test-single:  called before javac compilation of single JUnit test
+      -post-compile-test-single: called after javac compilation of single JUunit test
+      -pre-jar:                  called before JAR building
+      -post-jar:                 called after JAR building
+      -post-clean:               called after cleaning build products
+
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported 
+    nbproject/build-impl.xml file. 
+
+
+    Another way to customize the build is by overriding existing main targets.
+    The targets of interest are: 
+
+      -init-macrodef-javac:     defines macro for javac compilation
+      -init-macrodef-junit:     defines macro for junit execution
+      -init-macrodef-debug:     defines macro for class debugging
+      -init-macrodef-java:      defines macro for class execution
+      -do-jar:                  JAR building
+      run:                      execution of project 
+      -javadoc-build:           Javadoc generation
+      test-report:              JUnit report generation
+
+    An example of overriding the target for project execution could look like this:
+
+        <target name="run" depends="FroggerApp_B-impl.jar">
+            <exec dir="bin" executable="launcher.exe">
+                <arg file="${dist.jar}"/>
+            </exec>
+        </target>
+
+    Notice that the overridden target depends on the jar target and not only on 
+    the compile target as the regular run target does. Again, for a list of available 
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file. 
+
+    -->
+</project>
